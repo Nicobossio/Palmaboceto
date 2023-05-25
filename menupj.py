@@ -9,8 +9,8 @@ def mostrar_menu():
         print("1. Agregar proyecto")
         print("2. Mostrar proyectos")
         print("3. Agregar ventanas")
-        print("4. Mostrar ventanas y atributos")
-        print("5. Borrar proyectos")
+        print("4. Borrar proyectos")
+        print("5. Mostrar ventanas y atributos")
         print("6. Salir")
         
         opcion = input("Seleccione una opción: ")
@@ -22,9 +22,9 @@ def mostrar_menu():
         elif opcion == "3":
             agregar_pestanas()
         elif opcion == "4":
-            mostrar_pestanas()
+            borrar_proyecto
         elif opcion == "5":
-            borrar_proyecto()
+            mostrar_pestanas()
         elif opcion == "6":
             print("¡Hasta luego!")
             break
