@@ -46,6 +46,7 @@ while(captura.isOpened()):
             if save == 's':
                 #Escribe el dato
                 ws[f'{column}{row}'] = data
+                row += 1#contador para que escriba en la siguiente celda
         cv2.imshow('Webcam', RectifiedImage)
     else:
         cv2.imshow('Webcam', frame)
