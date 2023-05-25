@@ -1,5 +1,4 @@
 #Librerias a usar para el escaneo de los QR
-import dataclasses
 import cv2
 import numpy as np
 
@@ -20,7 +19,9 @@ while(captura.isOpened()):
     #Si el codigo tiene un valor, se va a imprimir por pantalla
     #Tambien se valida el frame para que se escanee el QR
     if len(data) > 0:
-        save = input(f'Dato: {data}')#da la posibilidad de poder escoger si queremos guardar o no el dato
+        save = ''
+        while save not in ['s', 'n']:
+            save = input(f'El dato leido es: {data}, quiere guardarlo [s/n]')#da la posibilidad de poder escoger si queremos guardar o no el dato
         cv2.imshow('Webcam', RectifiedImage)
     else:
         cv2.imshow('Webcam', frame)
