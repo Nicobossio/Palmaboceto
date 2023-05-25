@@ -1,4 +1,5 @@
 #Librerias a usar para el escaneo de los QR
+import dataclasses
 import cv2
 import numpy as np
 
@@ -6,21 +7,20 @@ import numpy as np
 captura = cv2.VideoCapture(0)
 
 #Bucle mientras la camara esta activa
-while(captura.IsOpened()):
+while(captura.isOpened()):
     ret, frame = captura.read()
 
     ##salida del programa cuando se tiene la entrada del usuario
     if (cv2.waitKey(1) == ord('s')):
         break
-    
     qrdetection = cv2.QRCodeDetector()
-    data, bbox, RectifiedImage == qrdetection.detectAndDecode(frame)#Datos que nos va a devolver el escaneo del QR
+    data, bbox, RectifiedImage = qrdetection.detectAndDecode(frame)#Datos que nos va a devolver el escaneo del QR
 
 
     #Si el codigo tiene un valor, se va a imprimir por pantalla
     #Tambien se valida el frame para que se escanee el QR
     if len(data) > 0:
-        print(f'Dato: {data}')
+        save = input(f'Dato: {data}')#da la posibilidad de poder escoger si queremos guardar o no el dato
         cv2.imshow('Webcam', RectifiedImage)
     else:
         cv2.imshow('Webcam', frame)
