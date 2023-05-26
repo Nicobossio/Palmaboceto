@@ -1,6 +1,6 @@
 #Librerias para la interfaz visual
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit
 
 
 # Se crea una ventana para agregar proyectos
@@ -84,6 +84,54 @@ class AgregarAtributosDialog(QDialog):
             self.close()
 
 
+# Se crea una ventana para mostrar los proyectos y seleccionar uno para ver sus atributos
+class MostrarProyectosDialog(QDialog):
+    def __init__(self, proyectos, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Mostrar Proyectos")
+        self.layout = QVBoxLayout()
+        self.label_proyectos = QLabel("Proyectos:")
+        self.text_proyectos = QTextEdit()
+        self.text_proyectos.setReadOnly(True)
+        self.boton_seleccionar = QPushButton("Seleccionar Proyecto")
+        self.boton_seleccionar.clicked.connect(self.mostrar_atributos)
+        self.layout.addWidget(self.label_proyectos)
+        self.layout.addWidget(self.text_proyectos)
+        self.layout.addWidget(self.boton_seleccionar)
+        self.setLayout(self.layout)
+        self.proyectos = proyectos
+        self.mostrar_lista_proyectos()
+
+    def mostrar_lista_proyectos(self):
+        lista_proyectos = "\n".join([f"{indice + 1}. {proyecto['nombre']}" for indice, proyecto in enumerate(self.proyectos)])
+        self.text_proyectos.setText(lista_proyectos)
+
+    def mostrar_atributos(self):
+        indice_proyecto = self.text_proyectos.textCursor().blockNumber()
+        proyecto = self.proyectos[indice_proyecto]
+        mostrar_atributos_dialog = MostrarAtributosDialog(proyecto)
+        mostrar_atributos_dialog.exec_()
+
+
+# Se crea una ventana para mostrar los atributos de un proyecto
+class MostrarAtributosDialog(QDialog):
+    def __init__(self, proyecto, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Mostrar Atributos")
+        self.layout = QVBoxLayout()
+        self.label_atributos = QLabel(f"Atributos del proyecto '{proyecto['nombre']}':")
+        self.text_atributos = QTextEdit()
+        self.text_atributos.setReadOnly(True)
+        self.layout.addWidget(self.label_atributos)
+        self.layout.addWidget(self.text_atributos)
+        self.setLayout(self.layout)
+        self.mostrar_lista_atributos(proyecto)
+
+    def mostrar_lista_atributos(self, proyecto):
+        lista_atributos = "\n".join([f"{indice + 1}. {atributo}" for indice, atributo in enumerate(proyecto['atributos'])])
+        self.text_atributos.setText(lista_atributos)
+
+
 # Se crea una ventana principal con botones para realizar las diferentes acciones del menú
 class MenuVentana(QMainWindow):
     def __init__(self, parent=None):
@@ -108,29 +156,24 @@ class MenuVentana(QMainWindow):
         agregar_proyecto_dialog.exec_()
 
     def mostrar_agregar_pestanas(self):
-        if len(proyectos) == 0:
-            print("No hay proyectos disponibles para agregar pestañas.")
-        else:
+        if len(proyectos) > 0:
             agregar_pestanas_dialog = AgregarPestanasDialog(proyectos, self)
             agregar_pestanas_dialog.exec_()
+        else:
+            print("No hay proyectos para agregar pestañas.")
 
     def mostrar_proyectos(self):
-        if len(proyectos) == 0:
-            print("No hay proyectos disponibles.")
+        if len(proyectos) > 0:
+            mostrar_proyectos_dialog = MostrarProyectosDialog(proyectos, self)
+            mostrar_proyectos_dialog.exec_()
         else:
-            print("Proyectos:")
-            for indice, proyecto in enumerate(proyectos):
-                print(f"{indice + 1}. {proyecto['nombre']}")
+            print("No hay proyectos para mostrar.")
 
 
-# Se crea una lista para poder guardar los proyectos
-proyectos = []
+if __name__ == '__main__':
+    proyectos = []
 
-
-# Se crea la aplicación y se muestra la ventana principal
-app = QApplication(sys.argv)
-menu = MenuVentana()
-menu.show()
-
-# Se ejecuta la aplicación
-sys.exit(app.exec_())
+    app = QApplication(sys.argv)
+    menu_ventana = MenuVentana()
+    menu_ventana.show()
+    sys.exit(app.exec_())
