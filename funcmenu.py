@@ -1,171 +1,136 @@
-#Se crea una lista para poder guardar los proyectos
+#Librerias para la interfaz visual
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QComboBox
+
+
+# Se crea una ventana para agregar proyectos
+class AgregarProyectoDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Agregar Proyecto")
+        self.layout = QVBoxLayout()
+        self.label_nombre = QLabel("Nombre del proyecto:")
+        self.input_nombre = QLineEdit()
+        self.boton_agregar = QPushButton("Agregar")
+        self.boton_agregar.clicked.connect(self.agregar_proyecto)
+        self.layout.addWidget(self.label_nombre)
+        self.layout.addWidget(self.input_nombre)
+        self.layout.addWidget(self.boton_agregar)
+        self.setLayout(self.layout)
+
+    def agregar_proyecto(self):
+        nombre = self.input_nombre.text()
+        if nombre:
+            proyectos.append({"nombre": nombre, "pestanas": []})
+            print("Proyecto agregado con éxito.")
+            self.close()
+
+
+# Se crea una ventana para agregar pestañas
+class AgregarPestanasDialog(QDialog):
+    def __init__(self, proyectos, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Agregar Pestañas")
+        self.layout = QVBoxLayout()
+        self.label_proyecto = QLabel("Seleccione un proyecto:")
+        self.combo_proyecto = QComboBox()
+        self.combo_proyecto.addItems([proyecto["nombre"] for proyecto in proyectos])
+        self.label_nombre = QLabel("Nombre de la pestaña:")
+        self.input_nombre = QLineEdit()
+        self.boton_agregar = QPushButton("Agregar")
+        self.boton_agregar.clicked.connect(self.agregar_pestanas)
+        self.layout.addWidget(self.label_proyecto)
+        self.layout.addWidget(self.combo_proyecto)
+        self.layout.addWidget(self.label_nombre)
+        self.layout.addWidget(self.input_nombre)
+        self.layout.addWidget(self.boton_agregar)
+        self.setLayout(self.layout)
+
+    def agregar_pestanas(self):
+        indice_proyecto = self.combo_proyecto.currentIndex()
+        proyecto = proyectos[indice_proyecto]
+        nombre_pestaña = self.input_nombre.text()
+        if nombre_pestaña:
+            atributos = []
+            agregar_atributos_dialog = AgregarAtributosDialog(atributos, self)
+            agregar_atributos_dialog.exec_()
+            proyecto["pestanas"].append({"nombre": nombre_pestaña, "atributos": atributos})
+            print("Pestaña agregada con éxito.")
+            self.close()
+
+
+# Se crea una ventana para agregar atributos
+class AgregarAtributosDialog(QDialog):
+    def __init__(self, atributos, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Agregar Atributos")
+        self.layout = QVBoxLayout()
+        self.label_atributo = QLabel("Ingrese un atributo (0 para terminar):")
+        self.input_atributo = QLineEdit()
+        self.boton_agregar = QPushButton("Agregar")
+        self.boton_agregar.clicked.connect(self.agregar_atributo)
+        self.layout.addWidget(self.label_atributo)
+        self.layout.addWidget(self.input_atributo)
+        self.layout.addWidget(self.boton_agregar)
+        self.setLayout(self.layout)
+        self.atributos = atributos
+
+    def agregar_atributo(self):
+        atributo = self.input_atributo.text()
+        if atributo != "0":
+            self.atributos.append(atributo)
+            self.input_atributo.clear()
+        else:
+            self.close()
+
+
+# Se crea una ventana principal con botones para realizar las diferentes acciones del menú
+class MenuVentana(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Menu")
+        self.setGeometry(100, 100, 300, 200)
+
+        self.boton_agregar_proyecto = QPushButton("Agregar Proyecto", self)
+        self.boton_agregar_proyecto.setGeometry(50, 50, 200, 30)
+        self.boton_agregar_proyecto.clicked.connect(self.mostrar_agregar_proyecto)
+
+        self.boton_agregar_pestanas = QPushButton("Agregar Pestañas", self)
+        self.boton_agregar_pestanas.setGeometry(50, 100, 200, 30)
+        self.boton_agregar_pestanas.clicked.connect(self.mostrar_agregar_pestanas)
+
+        self.boton_mostrar_proyectos = QPushButton("Mostrar Proyectos", self)
+        self.boton_mostrar_proyectos.setGeometry(50, 150, 200, 30)
+        self.boton_mostrar_proyectos.clicked.connect(self.mostrar_proyectos)
+
+    def mostrar_agregar_proyecto(self):
+        agregar_proyecto_dialog = AgregarProyectoDialog(self)
+        agregar_proyecto_dialog.exec_()
+
+    def mostrar_agregar_pestanas(self):
+        if len(proyectos) == 0:
+            print("No hay proyectos disponibles para agregar pestañas.")
+        else:
+            agregar_pestanas_dialog = AgregarPestanasDialog(proyectos, self)
+            agregar_pestanas_dialog.exec_()
+
+    def mostrar_proyectos(self):
+        if len(proyectos) == 0:
+            print("No hay proyectos disponibles.")
+        else:
+            print("Proyectos:")
+            for indice, proyecto in enumerate(proyectos):
+                print(f"{indice + 1}. {proyecto['nombre']}")
+
+
+# Se crea una lista para poder guardar los proyectos
 proyectos = []
 
 
-#Esto permitira al usuario, crear y agregar el proyecto
-def agregar_proyecto():
-    nombre = input("Ingrese el nombre del proyecto: ")
-    proyectos.append({"nombre": nombre, "pestanas": []})
-    print("Proyecto agregado con éxito.")
+# Se crea la aplicación y se muestra la ventana principal
+app = QApplication(sys.argv)
+menu = MenuVentana()
+menu.show()
 
-
-#Muestra los proyectos en los cuales se va a trabajar
-def mostrar_proyectos():
-    if len(proyectos) == 0:
-        print("No hay proyectos disponibles.")
-    else:
-        print("Proyectos:")
-        for indice, proyecto in enumerate(proyectos):
-            print(f"{indice+1}. {proyecto['nombre']}")
-
-
-
-#Funcion para borrar los proyectos
-def borrar_proyecto():
-    if len(proyectos) == 0:
-        print("No hay proyectos disponibles para borrar.")
-    else:
-        print("Proyectos:")
-        for indice, proyecto in enumerate(proyectos):
-            print(f"{indice+1}. {proyecto['nombre']}")
-        
-        while True:
-            opcion = input("Ingrese el número del proyecto que desea borrar (0 para cancelar): ")
-            if opcion.isdigit():
-                indice = int(opcion) - 1
-                if indice >= 0 and indice < len(proyectos):
-                    proyecto_borrado = proyectos.pop(indice)
-                    print(f"Proyecto '{proyecto_borrado['nombre']}' borrado con éxito.")
-                elif indice == -1:
-                    print("Operación cancelada.")
-                else:
-                    print("Índice inválido. Por favor, seleccione un número válido.")
-            else:
-                print("Opción inválida. Por favor, ingrese un número válido.")
-                continue
-            
-            opcion_continuar = input("¿Desea borrar otro proyecto? (s/n): ")
-            if opcion_continuar.lower() != "s":
-                break
-
-
-#En este caso se crea una funcion para poder anadir unas pestanas a las cuales le vamos a meter atributos
-def agregar_pestanas():
-    if len(proyectos) == 0:
-        print("No hay proyectos disponibles para agregar pestañas.")
-    else:
-        print("Proyectos:")
-        for indice, proyecto in enumerate(proyectos):
-            print(f"{indice+1}. {proyecto['nombre']}")
-        
-        while True:
-            opcion = input("Ingrese el número del proyecto al que desea agregar pestañas (0 para cancelar): ")
-            if opcion.isdigit():
-                indice_proyecto = int(opcion) - 1
-                if indice_proyecto >= 0 and indice_proyecto < len(proyectos):
-                    proyecto = proyectos[indice_proyecto]
-                    while True:
-                        nombre_pestaña = input("Ingrese el nombre de la pestaña (0 para cancelar): ")
-                        if nombre_pestaña == "0":
-                            print("Operación cancelada.")
-                            break
-                        atributos = []
-                        while True:
-                            atributo = input("Ingrese un atributo para la pestaña (0 para terminar): ")
-                            if atributo == "0":
-                                break
-                            atributos.append(atributo)
-                        
-                        proyecto["pestanas"].append({"nombre": nombre_pestaña, "atributos": atributos})
-                        print("Pestaña agregada con éxito.")
-                        
-                        opcion_continuar = input("¿Desea agregar otra pestaña? (s/n): ")
-                        if opcion_continuar.lower() != "s":
-                            break
-                elif indice_proyecto == -1:
-                    print("Operación cancelada.")
-                    break
-                else:
-                    print("Índice inválido. Por favor, seleccione un número válido.")
-            else:
-                print("Opción inválida. Por favor, ingrese un número válido.")
-                continue
-            
-            opcion_continuar = input("¿Desea agregar pestañas a otro proyecto? (s/n): ")
-            if opcion_continuar.lower() != "s":
-                break
-                
-                
-
-#Esta funcion me ayuda a definir como se pueden mostrar las pestanas
-def mostrar_pestanas():
-   def mostrar_pestanas():
-    if len(proyectos) == 0:
-        print("No hay proyectos disponibles.")
-    else:
-        print("Proyectos:")
-        for indice, proyecto in enumerate(proyectos):
-            print(f"{indice+1}. {proyecto['nombre']}")
-        
-        while True:
-            opcion = input("Ingrese el número del proyecto que desea ver/editar las pestañas (0 para cancelar): ")
-            if opcion.isdigit():
-                indice_proyecto = int(opcion) - 1
-                if indice_proyecto >= 0 and indice_proyecto < len(proyectos):
-                    proyecto = proyectos[indice_proyecto]
-                    print(f"Pestañas del proyecto '{proyecto['nombre']}':")
-                    pestañas = proyecto['pestanas']
-                    if len(pestañas) == 0:
-                        print("No hay pestañas disponibles.")
-                    else:
-                        for indice, pestaña in enumerate(pestañas):
-                            print(f"{indice+1}. Pestaña: {pestaña['nombre']}")
-                        
-                        opcion_pestaña = input("Ingrese el número de la pestaña que desea editar (0 para cancelar): ")
-                        if opcion_pestaña.isdigit():
-                            indice_pestaña = int(opcion_pestaña) - 1
-                            if indice_pestaña >= 0 and indice_pestaña < len(pestañas):
-                                pestaña = pestañas[indice_pestaña]
-                                print(f"Atributos de la pestaña '{pestaña['nombre']}':")
-                                atributos = pestaña['atributos']
-                                if len(atributos) == 0:
-                                    print("No hay atributos disponibles.")
-                                else:
-                                    for indice, atributo in enumerate(atributos):
-                                        print(f"{indice+1}. {atributo}")
-                                    
-                                    opcion_atributo = input("Ingrese el número del atributo que desea editar (0 para cancelar): ")
-                                    if opcion_atributo.isdigit():
-                                        indice_atributo = int(opcion_atributo) - 1
-                                        if indice_atributo >= 0 and indice_atributo < len(atributos):
-                                            nuevo_atributo = input("Ingrese el nuevo valor para el atributo: ")
-                                            atributos[indice_atributo] = nuevo_atributo
-                                            print("Atributo editado con éxito.")
-                                        elif indice_atributo == -1:
-                                            print("Operación cancelada.")
-                                            break
-                                        else:
-                                            print("Índice inválido. Por favor, seleccione un número válido.")
-                                    else:
-                                        print("Opción inválida. Por favor, ingrese un número válido.")
-                                        continue
-                            elif indice_pestaña == -1:
-                                print("Operación cancelada.")
-                                break
-                            else:
-                                print("Índice inválido. Por favor, seleccione un número válido.")
-                        else:
-                            print("Opción inválida. Por favor, ingrese un número válido.")
-                            continue
-                elif indice_proyecto == -1:
-                    print("Operación cancelada.")
-                    break
-                else:
-                    print("Índice inválido. Por favor, seleccione un número válido.")
-            else:
-                print("Opción inválida. Por favor, ingrese un número válido.")
-                continue
-            
-            opcion_continuar = input("¿Desea ver/editar las pestañas de otro proyecto? (s/n): ")
-            if opcion_continuar.lower() != "s":
-                break
+# Se ejecuta la aplicación
+sys.exit(app.exec_())
