@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QPushButton
 from funcmenu import DataEntryForm
 from data_display import DataDisplay
 from database import Database
+from data_viewer import get_data
+import csv
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -25,4 +27,20 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.view_data_button)
 
     def view_data(self):
-        self.data_display.refresh_data()
+        data = get_data()
+        self.export_to_excel(data)
+        # Resto del código para mostrar los datos en la interfaz
+
+    def export_to_excel(self, data):
+        with open('data.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Identificacion', 'Nombre', 'Telefono'])
+            writer.writerows(data)
+
+class GUI:
+    def __init__(self):
+        # Resto del código de inicialización de la GUI
+
+        def view_data(self):
+            # Resto del código para obtener los datos y llamar a MainWindow.export_to_excel()
+            pass
