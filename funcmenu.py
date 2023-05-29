@@ -1,40 +1,40 @@
-#Entrada de datos
-#Este arcivo maneja como se manejan los datos para la base de datos
-import tkinter as tk
+#ENtrada  registro de los datos para la base de datos
+from PyQt5.QtWidgets import QVBoxLayout, QLabel, QLineEdit, QPushButton, QWidget
 
-class DataEntryForm:
-    def __init__(self, parent, db):
-        self.parent = parent
+class DataEntryForm(QWidget):
+    def __init__(self, db):
+        super().__init__()
+
         self.db = db
 
-        self.frame = tk.Frame(self.parent)
-        self.frame.pack()
+        self.layout = QVBoxLayout(self)
 
-        self.field1_label = tk.Label(self.frame, text="Field 1:")
-        self.field1_label.pack()
-        self.field1_entry = tk.Entry(self.frame)
-        self.field1_entry.pack()
+        self.field1_label = QLabel("Field 1:")
+        self.layout.addWidget(self.field1_label)
+        self.field1_entry = QLineEdit()
+        self.layout.addWidget(self.field1_entry)
 
-        self.field2_label = tk.Label(self.frame, text="Field 2:")
-        self.field2_label.pack()
-        self.field2_entry = tk.Entry(self.frame)
-        self.field2_entry.pack()
+        self.field2_label = QLabel("Field 2:")
+        self.layout.addWidget(self.field2_label)
+        self.field2_entry = QLineEdit()
+        self.layout.addWidget(self.field2_entry)
 
-        self.field3_label = tk.Label(self.frame, text="Field 3:")
-        self.field3_label.pack()
-        self.field3_entry = tk.Entry(self.frame)
-        self.field3_entry.pack()
+        self.field3_label = QLabel("Field 3:")
+        self.layout.addWidget(self.field3_label)
+        self.field3_entry = QLineEdit()
+        self.layout.addWidget(self.field3_entry)
 
-        self.submit_button = tk.Button(self.frame, text="Submit", command=self.submit_data)
-        self.submit_button.pack()
+        self.submit_button = QPushButton("Submit")
+        self.submit_button.clicked.connect(self.submit_data)
+        self.layout.addWidget(self.submit_button)
 
     def submit_data(self):
-        field1 = self.field1_entry.get()
-        field2 = self.field2_entry.get()
-        field3 = int(self.field3_entry.get())
+        field1 = self.field1_entry.text()
+        field2 = self.field2_entry.text()
+        field3 = int(self.field3_entry.text())
 
         self.db.insert_data(field1, field2, field3)
 
-        self.field1_entry.delete(0, tk.END)
-        self.field2_entry.delete(0, tk.END)
-        self.field3_entry.delete(0, tk.END)
+        self.field1_entry.clear()
+        self.field2_entry.clear()
+        self.field3_entry.clear()
