@@ -5,7 +5,7 @@
 block_cipher = None
 
 a = Analysis(['menupj.py'],
-             pathex=['path/to/your/project'],
+             pathex=['/home/nicolas/PycharmProjects/App/'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -22,7 +22,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='YourProjectName',
+          name='App',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
