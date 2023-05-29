@@ -6,7 +6,7 @@ from database import Database
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("CyberTracker Replica")
+        self.setWindowTitle("App")
 
         self.db = Database("data.db")  # Reemplaza "data.db" con el nombre de archivo de base de datos deseado
 
