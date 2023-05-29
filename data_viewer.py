@@ -11,7 +11,9 @@ class DataDisplay(QWidget):
         self.data_label = QLabel()
         self.layout.addWidget(self.data_label)
 
-    def refresh_data(self):
+        self.populate_data()
+
+    def populate_data(self):
         data = self.db.get_all_data()
         data_text = ""
         for item in data:
